@@ -19,7 +19,5 @@ The overall evaluation environment was
 3. angr 9.1
 
 ### Notes
-This evaluation can take significant time and computational resources to reproduce. For the evaluation we ran the analysis with
-1. a timeout of 1 hour per driver
-2. 8 drivers analyzed concurrently
-
+This evaluation can take significant time and computational resources to reproduce. For the evaluation we ran the analysis with a timeout of 1 hour per driver, and 8 drivers being analyzed concurrently.
+The final results can take between 2-6 hours to complete analysis with these settings.
