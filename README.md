@@ -8,7 +8,7 @@ POPKORN: Popping Windows Kernel Drivers At Scale
 
 ### Artifact Summary
 The artifact for this submission will contain
-1. The (full/filtered?) collected dataset of drivers (files ending in the .sys extension) used for the evaluation in Paper Section ?
+1. The full and filtered collected dataset of drivers (files ending in the .sys extension) used for the evaluation in Paper Section ? 
 2. The python source-code of the `angr`-based analysis code used to perform the evaluation and produce the vulnerability reports used for the evaluation
 3. A `Dockerfile` to run the analysis in with all dependencies and required tools installed
 4. Detailed instructions and scripts to reproduce the performed analysis commands
@@ -16,7 +16,7 @@ The artifact for this submission will contain
 The overall evaluation environment was 
 1. Ubuntu 20.04
 2. Python 3.8
-3. angr from git
+3. angr 9.1
 
 ### Notes
 This evaluation can take significant time and computational resources to reproduce. For the evaluation we ran the analysis with
