@@ -10,7 +10,7 @@ POPKORN: Popping Windows Kernel Drivers At Scale
 The artifact for this submission will contain
 1. The dataset of drivers (the SYS files ending in the .sys extension) used for the evaluation in Section 6 of the paper, about 300MB in size
 2. The python source-code of the `angr`-based analysis code used to produce the vulnerability reports used for the evaluation
-3. A `Dockerfile` to run the analysis in with all dependencies and required tools installed
+3. A `Dockerfile` describing the evaluation environment with all dependencies and required tools installed
 4. Detailed instructions and scripts to reproduce the performed evaluation results
 
 The overall evaluation environment was 
