@@ -21,9 +21,115 @@ python evaluate_compute_bug_types.py
 
 
 ## Reproduced results
-We reran the results with this exact setup in two setups
+We reran the results with the Dockerfile in this repo in two setups: 1 with a small machine, and one with a larger one
+which performs the full dataset analysis much faster.
 
-### Intel(R) Xeon(R) Gold 6252 CPU @ 2.10GHz, 96 cores, 378 GB RAM
+### Intel(R) Xeon(R) CPU           E5645  @ 2.40GHz, 24 cores, 94 GB RAM
+
+Machine Specs:
+```
+$ lscpu
+Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   40 bits physical, 48 bits virtual
+CPU(s):                          24
+On-line CPU(s) list:             0-23
+Thread(s) per core:              2
+Core(s) per socket:              6
+Socket(s):                       2
+NUMA node(s):                    2
+Vendor ID:                       GenuineIntel
+CPU family:                      6
+Model:                           44
+Model name:                      Intel(R) Xeon(R) CPU           E5645  @ 2.40GHz
+Stepping:                        2
+Frequency boost:                 enabled
+CPU MHz:                         2152.758
+CPU max MHz:                     2401.0000
+CPU min MHz:                     1600.0000
+BogoMIPS:                        4800.02
+Virtualization:                  VT-x
+L1d cache:                       384 KiB
+L1i cache:                       384 KiB
+L2 cache:                        3 MiB
+L3 cache:                        24 MiB
+NUMA node0 CPU(s):               0-5,12-17
+NUMA node1 CPU(s):               6-11,18-23
+...
+
+$ free -h
+              total        used        free      shared  buff/cache   available
+Mem:           94Gi       1.0Gi        91Gi       0.0Ki       2.0Gi        92Gi
+Swap:         8.0Gi       352Mi       7.7Gi
+```
+
+On this machine, the following command finished in 861 minutes (14h, 21 minutes). Note, this explicitly only runs 8
+analysis tasks in parallel.
+
+```
+$ time python runner_analysis.py --parallel 8 --timeout 3600 popkorn_drivers_with_sink_imports_only
+...
+
+real    861m16.099s
+user    3423m41.823s
+sys     62m48.645s
+```
+####
+Vulnerabilities detected
+```
+$ python evaluate_compute_bug_types.py ./results_popkorn_drivers_with_sink_imports_only_timeout3600_run0/
+
+driver_name,triggered_sink_function
+ATSwpDrv.sys,MmapIoSpace
+AsIO32.sys,ZwMapViewOfSection
+AsIO64.sys,ZwMapViewOfSection
+AsInsHelp32.sys,ZwMapViewOfSection
+AsInsHelp64.sys,ZwMapViewOfSection
+AsUpIO32.sys,ZwMapViewOfSection
+AsUpIO64.sys,ZwMapViewOfSection
+AsmIo.sys,MmapIoSpace
+AsmIo64.sys,MmapIoSpace
+CorsairLLAccess32.sys,MmapIoSpace
+CorsairLLAccess64.sys,MmapIoSpace
+EIO.sys,MmapIoSpace
+EIO64.sys,MmapIoSpace
+FLASHUD.sys,MmapIoSpace
+GPCIDrv.sys,MmapIoSpace
+GPCIDrv.sys,ZwMapViewOfSection
+GPCIDrv64.sys,MmapIoSpace
+GPCIDrv64.sys,ZwMapViewOfSection
+Mydrivers32.sys,MmapIoSpace
+PhlashNT.sys,MmapIoSpace
+QIOMem.sys,MmapIoSpace
+WinFlash.sys,MmapIoSpace
+WinFlash64.sys,MmapIoSpace
+atdcm64a.sys,MmapIoSpace
+athpexnt.sys,MmapIoSpace
+aticd64a.sys,ZwMapViewOfSection
+atiicdxx.sys,ZwMapViewOfSection
+cpuz_x32.sys,MmapIoSpace
+dcdbas64.sys,MmapIoSpace
+flash.sys,MmapIoSpace
+l1v5gvnk.sys,ZwMapViewOfSection
+nvflsh32.sys,ZwMapViewOfSection
+nvflsh64.sys,ZwMapViewOfSection
+nvnetbus.sys,ZwMapViewOfSection
+pmxdrv.sys,ZwMapViewOfSection
+rtkio64.sys,MmapIoSpace
+rtkiow8x64.sys,MmapIoSpace
+rtkiow8x86.sys,MmapIoSpace
+srvkp.sys,MmapIoSpace
+srvkp.sys,ZwMapViewOfSection
+
+$ python evaluate_compute_bug_types.py ./results_popkorn_drivers_with_sink_imports_only_timeout3600_run0/ | sed 's/,/ /g' | awk '{print $2}' | sort | uniq -c
+      1
+     24 MmapIoSpace
+      1 triggered_sink_function
+     16 ZwMapViewOfSection
+```
+
+### Intel(R) Xeon(R) Gold 6252 CPU @ 2.10GHz, 96 cores, 376 GB RAM
 
 Machine Specs:
 ```
@@ -62,7 +168,9 @@ Mem:          376Gi       343Gi        32Gi       0.0Ki       963Mi        31Gi
 Swap:         8.0Gi       8.0Gi       4.0Mi
 ```
 
-On this machine, the following command finished in 156 minutes (2h, 36 minutes):
+On this machine, the following command finished in 156 minutes (2h, 36 minutes). Note, this implicitly uses half of the
+available cores as the default number of tasks to run in parallel, 48 in this case. This is therefore equivalent to
+passing the argument `--parallel 48`.
 ```
 $ time python runner_analysis.py --timeout 3600 popkorn_drivers_with_sink_imports_only
 ...
@@ -72,9 +180,8 @@ user    3661m43.074s
 sys     133m22.671s
 ```
 
-####
+#### Time taken until vulnerable drivers were detected
 
-Time taken until vulnerable drivers were detected
 ```
 $ python ./evaluate_time_taken.py ./results_popkorn_drivers_with_sink_imports_only_timeout3600_run0/ | sed 's/,/ /g' | awk '{print $3}' | sort -n
 WARNING | 2022-09-14 14:16:44,356 | angr.state_plugins.unicorn_engine | failed loading "angr_native.so", unicorn support disabled (/home/popkorn/angr-dev/angr/angr/lib/lib/angr_native.so: cannot open shared object file: No such file or directory)
@@ -165,4 +272,10 @@ rtkiow8x64.sys,MmapIoSpace
 rtkiow8x86.sys,MmapIoSpace
 srvkp.sys,MmapIoSpace
 srvkp.sys,ZwMapViewOfSection
+
+$ python evaluate_compute_bug_types.py ./results_popkorn_drivers_with_sink_imports_only_timeout3600_run0/ | sed 's/,/ /g' | awk '{print $2}' | sort | uniq -c
+      1
+     22 MmapIoSpace
+     16 ZwMapViewOfSection
+      1 triggered_sink_function
 ```
