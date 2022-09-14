@@ -19,15 +19,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y openjdk-
 # setup user `popkorn` with a home directory
 RUN useradd -ms /bin/bash popkorn
 USER popkorn
-RUN git clone https://github.com/angr/angr-dev.git /home/popkorn/angr-dev
-
-RUN /bin/bash -c "source /usr/local/bin/virtualenvwrapper.sh && \
-    cd /home/popkorn/angr-dev && \
-    ./setup.sh -e popkorn"
 
 ENV VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 RUN /bin/bash -c "source /usr/local/bin/virtualenvwrapper.sh && \
-    workon popkorn && pip uninstall --yes pyvex && pip install pyvex" # this is a hack to get around a bug in angr-dev
+    mkvirtualenv popkorn && \
+    pip install angr==9.2.18 ipython==8.5.0 ipdb==0.13.9"
 
 RUN mkdir /home/popkorn/popkorn
 COPY ./datasets /home/popkorn/popkorn/datasets/
