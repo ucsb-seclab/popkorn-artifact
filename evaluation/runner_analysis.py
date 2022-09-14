@@ -71,7 +71,13 @@ def map_angr_full_blown(out_dir_path, driver_path):
     if ARGS.directed:
         cmd += ['--directed']
     cmd += [driver_path]
+
+    start_t = time.time()
     result = subprocess.run(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    end_t = time.time()
+
+    with open(str(result_dir / 'time_taken'), 'w') as f:
+        f.write(str(end_t - start_t))
 
     if result.stdout:
         with open(str(result_dir / 'stdout'), 'wb') as f:
