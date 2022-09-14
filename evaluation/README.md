@@ -75,7 +75,7 @@ real    861m16.099s
 user    3423m41.823s
 sys     62m48.645s
 ```
-#### Vulnerabilities detected
+### Vulnerabilities detected
 ```
 $ python evaluate_compute_bug_types.py ./results_popkorn_drivers_with_sink_imports_only_timeout3600_run0/
 
