@@ -47,6 +47,8 @@ for analysis_run_complete in glob.iglob(os.path.join(GLOB, 'complete.json')):
         else:
             stdout = b''
         timed_out = status.strip() == '124'
+        with open(driver_results_dir / 'time_taken', 'r') as f:
+            time_taken = float(f.read())
 
         msg = ''
         if flagged:
@@ -61,14 +63,16 @@ for analysis_run_complete in glob.iglob(os.path.join(GLOB, 'complete.json')):
         #     msg = 'could not locate ioctl handler'
         per_driver_results[DRIVER_NAME][ANALYSIS_ID] = {
             'driver': driver_results_dir.name,
-            'analysis': msg
+            'analysis': msg,
+            'time_taken': time_taken,
         }
 
 fieldnames = ['driver_name', 'normalized_driver_name']
 
 ANALYSIS_KEYS = list(sorted(analyses))
 DRIVER_KEYS = list(sorted(driver_names))
-fieldnames += ANALYSIS_KEYS
+for key in ANALYSIS_KEYS:
+    fieldnames += [key, key + '_time_taken']
 
 with open('results.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
@@ -76,5 +80,7 @@ with open('results.csv', 'w', newline='') as csvfile:
     for driver_name in DRIVER_KEYS:
         norm = fully_normalized_drivername(driver_name)
         driver_results = per_driver_results[driver_name]
-        writer.writerow([driver_name.replace(',', '_'), norm] + [driver_results[anal]['analysis'] for anal in ANALYSIS_KEYS])
-        
+        row = [driver_name.replace(',', '_'), norm]
+        for analysis in ANALYSIS_KEYS:
+            row += [driver_results[analysis]['analysis'], driver_results[analysis]['time_taken']]
+
