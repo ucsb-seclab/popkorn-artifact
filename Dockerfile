@@ -8,7 +8,7 @@ ENV TZ=America/Los_Angeles
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y tzdata
 
 # general dependencies
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y git build-essential python3 python3-pip python3-dev
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y git build-essential python3 python3-pip python3-dev htop vim sudo
 
 # install virtualenvwrapper
 RUN pip install virtualenvwrapper
