@@ -12,11 +12,11 @@ done
 
 python export_results_to_csv.py ./results_popkorn_drivers_with_sink_imports_only_timeout3600_run*
 
-# to get the number of drivers with each import
+# This will determine the number of drivers importing each POPKORN SINK
 python evaluate_count_imports.py popkorn_drivers_with_sink_imports_only
 
-#
-python evaluate_compute_bug_types.py
+# This will print out all vulnerable drivers found as well as the vulnerable sinks that were detected
+python evaluate_compute_bug_types.py './results_popkorn_drivers_with_sink_imports_only_timeout3600_*'
 ```
 
 ## Reproduced results
