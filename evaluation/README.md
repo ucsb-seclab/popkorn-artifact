@@ -7,7 +7,7 @@ cd evaluation/
 
 for i in `seq 1 5`
 do
-    python runner_analysis.py --parallel 8 --timeout 60 popkorn_drivers_with_sink_imports_only
+    python runner_analysis.py --parallel 8 --timeout 3600 popkorn_drivers_with_sink_imports_only
 done
 
 python export_results_to_csv.py ./results_popkorn_drivers_with_sink_imports_only_timeout3600_run*
