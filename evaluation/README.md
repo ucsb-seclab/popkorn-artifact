@@ -19,7 +19,6 @@ python evaluate_count_imports.py popkorn_drivers_with_sink_imports_only
 python evaluate_compute_bug_types.py
 ```
 
-
 ## Reproduced results
 We reran the results with the Dockerfile in this repo in two setups: 1 with a small machine, and one with a larger one
 which performs the full dataset analysis much faster.
