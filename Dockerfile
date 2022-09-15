@@ -39,4 +39,3 @@ RUN echo 'source /usr/local/bin/virtualenvwrapper.sh && workon popkorn' >> /home
 
 WORKDIR /home/popkorn/popkorn
 CMD ["/bin/bash"]
-
