@@ -25,7 +25,12 @@ We separately reran the evaluation on a 96-core Intel Xeon Gold 6252 CPU @ 2.10G
 
 ### Reproducing results
 
-See the results in [the evaluation/ README](evaluation/README.md)
+Detailed instructions on how to reproduce the evaluation, as well as expected results can be found in [the evaluation/ README](evaluation/README.md).
+
+### Docker Install
+
+The docker container can either be built locally via `docker build -t popkorn .` from within the root directory of the repository, or
+a prebuilt version can be downloaded from [DockerHub](https://hub.docker.com/layers/lukasdresel/popkorn/latest/images/sha256-5ce7a8a518b4142ce98ac2c79ab87170be51028ef151d8eab80c88af6c7e0dd5) via `docker pull lukasdresel/popkorn`.
 
 ### Local Install
 
