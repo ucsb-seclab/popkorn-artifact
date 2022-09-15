@@ -32,7 +32,16 @@ See the results in [the evaluation/ README](evaluation/README.md)
 On Ubuntu 20.04, the required dependencies can be installed with
 
 ```
-apt-get install git build-essential python3 python3-pip python3-dev htop vim sudo openjdk-8-jdk zlib1g:i386 libtinfo5:i386 libstdc++6:i386 libgcc1:i386 libc6:i386 libssl-dev nasm binutils-multiarch qtdeclarative5-dev libpixman-1-dev libglib2.0-dev debian-archive-keyring debootstrap libtool libreadline-dev cmake libffi-dev libxslt1-dev libxml2-dev
+
+dpkg --add-architecture i386
+
+apt-get update
+
+apt-get install git build-essential python3 python3-pip python3-dev htop vim sudo \
+                openjdk-8-jdk zlib1g:i386 libtinfo5:i386 libstdc++6:i386 libgcc1:i386 \
+                libc6:i386 libssl-dev nasm binutils-multiarch qtdeclarative5-dev libpixman-1-dev \
+                libglib2.0-dev debian-archive-keyring debootstrap libtool libreadline-dev cmake \
+                libffi-dev libxslt1-dev libxml2-dev
 
 pip install virtualenvwrapper
 
