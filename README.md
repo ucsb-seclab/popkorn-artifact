@@ -13,10 +13,10 @@ The artifact for this submission contains
 3. A `Dockerfile` describing the evaluation environment with all dependencies and required tools installed
 4. Detailed instructions and scripts to reproduce the performed evaluation results
 
-The overall evaluation environment was
+The overall evaluation environment consists of
 1. Ubuntu 20.04.4 LTS
 2. Python 3.8.10
-3. angr 9.1
+3. angr 9.2.18
 
 ### Notes
 This evaluation can take significant time and computational resources to reproduce. For the evaluation in the paper we ran the analysis with a timeout of 1 hour per driver, and 8 drivers being analyzed concurrently. The final results took around 14 hours to complete analysis with these settings on a machine with an Intel Xeon CPU @ 2.40GHz with 24 cores and 94 GBs of RAM.
