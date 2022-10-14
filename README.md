@@ -53,3 +53,74 @@ pip install virtualenvwrapper
 # inside the virtualenv if you choose to use one
 pip install angr==9.2.18 ipython==8.5.0 ipdb==0.13.9
 ```
+
+### Analysis on your own dataset
+
+#### Full dataset
+If you would like to run POPKORN on your own dataset of drivers, follow the following steps:
+```
+cd /path/to/popkorn/artifact/repo/
+mkdir datasets/my_dataset
+cp /path/to/my/kernel/drivers/*.sys ./datasets/my_dataset/
+```
+
+Then you can use `my_dataset` in the following commands to run the full analysis on your dataset with 8 parallel tasks and a 1 hour timeout per driver. This matches the evaluation we performed with the dataset name changed.
+```
+cd evaluation/
+
+# In the evaluation we ran each analysis 5 times, for simplicity here we only do one 
+python runner_analysis.py --parallel 8 --timeout 3600 my_dataset
+
+# export results
+python export_results_to_csv.py ./results_my_dataset_timeout3600_run*
+
+# print out vulnerable driver info for your dataset
+python evaluate_compute_bug_types.py './results_my_dataset_timeout3600_*'
+```
+#### Single Target
+If you want to run the base analysis on a single driver yourself, you can instead run
+```
+workon popkorn # virtualenv setup with all dependencies
+python angr_analysis/angr_full_blown.py /path/to/driver.sys
+```
+
+A run of this might look like this:
+
+```
+$ python angr_analysis/angr_full_blown.py ./datasets/physmem_drivers_imports_only/AsUpIO.sys 
+Found WDM driver:  0x100060
+
+Driver DEVICE_NAME:  \\\\.\\AsUpdateio
+
+Looking for MmMapIoSpace, ZwOpenProcess, ZwMapViewOfSection Imports..
+
+ZwOpenProcess import not found!
+
+MmMapIoSpace import not found!
+
+[+] Found ZwMapViewOfSection:  0x100030
+DriverObject @ 0x444f0000
+
+[+] Finding the IOCTL Handler..
+
+
+<SimulationManager with 1 active> {'active': [<SimState @ 0x100018>]}
+<SNIP, angr output ...>
+...
+[+] Found ioctl handler @ 11a10
+<SimulationManager with 1 active>
+<SNIP, angr output ...>
+...
+<SimulationManager with 1 active, 3 deadended, 1 found, 11 deferred>
+Found sol early..
+
+Finding the IOCTL codes..
+[+] Boom! Here is the IOCTL:  0xa040a480
+[+] IOCTL for ZwMapViewOfSection:  0xa040a480
+[+] ZwMapViewOfSection is potentially vulnerable, mapping PhysicalMemory .. 
+[+] Input Buffer Size:  <Bool InputBufferLength_15_32 >= 0x18>
+[+] Output Buffer Size:  <Bool OutputBufferLength_14_32 >= 0x8>
+[+] Input Buffer:  <Bool (0x0 .. (0x0 .. ioctl_inbuf_10_4096[79:64]) + ioctl_inbuf_10_4096[191:160]) + ioctl_inbuf_10_4096[127:64] - mem_7fffffffffefed0_31_64{UNINITIALIZED}[31:0] != 0x0>
+```
+
+This output shows that POPKORN detected a `ZwMapViewOfSection vulnerability with IOCTL 0xa040a480, when given an input buffer of size at least 24(0x18), and output size of at least 0x8. It also shows a constraint on certain bytes of the input buffer which must be satisfied for the vulnerability to be triggered.
